@@ -1,0 +1,17 @@
+ARG_ENABLE('zxing_cpp', 'zxing_cpp support', 'no');
+
+if (PHP_ZXING_CPP != 'no') {
+	if (
+		CHECK_LIB("ZXing.lib", "ZXing", "ext\\zxing_cpp\\zxing-cpp-lib\\lib")
+		&& CHECK_HEADER_ADD_INCLUDE("stb_image.h", "CFLAGS", "ext\\zxing_cpp\\stb-src;" + PHP_EXTRA_INCLUDES) 
+		&& CHECK_HEADER_ADD_INCLUDE("ReadBarcode.h", "CFLAGS", "ext\\zxing_cpp\\zxing-cpp-lib\\include\\ZXing;" + PHP_EXTRA_INCLUDES) 
+	) {
+		ADD_FLAG('LDFLAGS_ZXING_CPP', "ext\\zxing_cpp\\zxing-cpp-lib\\lib\\ZXing.lib");
+		ADD_FLAG('CFLAGS', '/EHsc /std:c++latest');
+		AC_DEFINE('HAVE_ZXING_CPP', 1, 'zxing_cpp support enabled');
+		EXTENSION('zxing_cpp', 'zxing_common.c zxing_cpp_lib.cpp zxing_cpp.c zxing_read_class.c zxing_exception_class.c zxing_image_class.c zxing_read_result_class.c zxing_write_result_class.c zxing_write_class.c', null, '');
+	} else {
+		WARNING("zxing_cpp not enabled; stb or zxing lib libraries and headers not found");
+	}
+	
+}

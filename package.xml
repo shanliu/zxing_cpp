@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" packagerversion="1.4.7" version="2.0" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
+    <name>yaf</name>
+    <channel>pecl.php.net</channel>
+    <summary>zxing-cpp wrappers for php extension</summary>
+    <description>multi-format 1D/2D barcode image processing library,more detail see : https://github.com/nu-book/zxing-cpp</description>
+    <lead>
+        <name>liu shan</name>
+        <user>shanliu</user>
+        <email>shan.liu@msn.com</email>
+        <active>yes</active>
+    </lead>
+    <date>2022-4-5</date>
+    <time>10:05:00</time>
+    <version>
+        <release>0.1.0</release>
+        <api>0.1.0</api>
+    </version>
+    <stability>
+        <release>beta</release>
+        <api>beta</api>
+    </stability>
+    <license uri="http://www.php.net/license">PHP</license>
+    <notes>
+        - first version
+    </notes>
+    <contents>
+        <dir name="/">
+            <file name="zxing_read_class.c"    role="src" />
+            <file name="zxing_exception_class.c"    role="src" />
+            <file name="php_zxing_cpp.h"    role="src" />
+            <file name="zxing_cpp.php"    role="doc" />
+            <file name="zxing_common.c"    role="src" />
+            <file name="LICENSE"    role="doc" />
+            <file name="zxing_cpp_lib.cpp"    role="src" />
+            <file name="zxing_cpp.c"    role="src" />
+            <file name="config.m4"    role="src" />
+            <file name="config.w32"    role="src" />
+            <file name="zxing_cpp_lib.h"    role="src" />
+            <file name="zxing_exception_class.h"    role="src" />
+            <file name="zxing_common.h"    role="src" />
+            <file name="zxing_image_class.c"    role="src" />
+            <file name="zxing_image_class.h"    role="src" />
+            <file name="zxing_read_class.h"    role="src" />
+            <file name="zxing_read_result_class.c"    role="src" />
+            <file name="zxing_read_result_class.h"    role="src" />
+            <file name="zxing_write_class.c"    role="src" />
+            <file name="zxing_write_class.h"    role="src" />
+            <file name="zxing_write_result_class.c"    role="src" />
+            <file name="zxing_write_result_class.h"    role="src" />
+        </dir>
+    </contents>
+    <dependencies>
+        <required>
+            <php>
+                <min>7.0.0</min>
+            </php>
+            <pearinstaller>
+                <min>1.4.0</min>
+            </pearinstaller>
+        </required>
+    </dependencies>
+    <providesextension />
+    <extsrcrelease />
+    <changelog>
+        <release>
+            <date>2022-4-5</date>
+            <version>
+                <release>0.1.0</release>
+                <api>0.1.0</api>
+            </version>
+            <stability>
+                <release>beta</release>
+                <api>beta</api>
+            </stability>
+            <license uri="http://www.php.net/license">PHP License</license>
+            <notes>
+                - first version
+            </notes>
+        </release>
+    </changelog>
+</package>
