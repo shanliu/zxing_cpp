@@ -25,7 +25,7 @@ make && make install
 
 #### build for windows
 
-> load build env 
+> load build env and build
 
 ```
 open [x64|x86] Native Tools Command Prompt for VS 2019 build env #need use >=vs2019
