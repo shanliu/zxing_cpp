@@ -15,7 +15,7 @@
 #### build for linux or mac
 
 ```shell
-cd zxing_cpp # go to your zxing_cpp src dir
+cd zxing_cpp # go to your `shanliu/zxing-cpp` src dir
 git clone --progress -v --depth 1 https://github.com/nothings/stb stb-src
 git clone --progress -v --depth 1 https://github.com/nu-book/zxing-cpp zxing-cpp-src
 cd zxing-cpp-src && cmake . && make && make install && cd .. # Maybe you set prefix??
