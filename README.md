@@ -2,11 +2,9 @@
 
 > ZXing-C++,more detail see: https://github.com/nu-book/zxing-cpp
 
-> fast, support multiple formats decode and encode
-
 > support php >=7.0 
 
-> API doc see : [zxing_cpp.php](./zxing_cpp.php)
+> API doc: [zxing_cpp.php](./zxing_cpp.php)
 
 > tutorial : [see examples](./examples)
 
