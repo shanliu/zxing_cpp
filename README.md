@@ -8,7 +8,7 @@
 
 > API doc see : [zxing_cpp.php](./zxing_cpp.php)
 
-> tutorial : [tools/dome.php](./tools/dome.php)
+> tutorial : [see examples](./examples)
 
 > windows dll : [dll/php_zxing_cpp_php8.*.dll](./dll)  `Tips:` Download according to the PHP version you use,only PHP > 8 and x64 has been compiled. other versions can be compiled according to the following documents 
 
