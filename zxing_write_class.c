@@ -32,11 +32,12 @@ static void zxing_write_property_declare(zend_class_entry *zxing_ce_ptr) {
 }while(0)
 
 ZEND_METHOD(zxing_write_class, __construct){
-    zend_long width,height,format;
-    ZEND_PARSE_PARAMETERS_START(3,3)
+    zend_long width=100,height=100,format;
+    ZEND_PARSE_PARAMETERS_START(1,3)
+            Z_PARAM_LONG(format)
+            Z_PARAM_OPTIONAL
             Z_PARAM_LONG(width)
             Z_PARAM_LONG(height)
-            Z_PARAM_LONG(format)
     ZEND_PARSE_PARAMETERS_END();
     ZXING_WRITE_CHECK_AND_SET(width);
     ZXING_WRITE_CHECK_AND_SET(height);
@@ -45,7 +46,7 @@ ZEND_METHOD(zxing_write_class, __construct){
 
 #define ZXING_WRITE_METHOD_LONG(method,name) ZEND_METHOD(zxing_write_class, method){ \
     zend_long name; \
-    ZEND_PARSE_PARAMETERS_START(3,3) \
+    ZEND_PARSE_PARAMETERS_START(1,1) \
     Z_PARAM_LONG(name) \
     ZEND_PARSE_PARAMETERS_END(); \
     ZXING_WRITE_CHECK_AND_SET(name);                                                 \
@@ -56,7 +57,9 @@ ZXING_WRITE_METHOD_LONG(setFormat,format)
 ZXING_WRITE_METHOD_LONG(setEncoding,encoding)
 ZXING_WRITE_METHOD_LONG(setWidth,width)
 ZXING_WRITE_METHOD_LONG(setHeight,height)
-ZXING_WRITE_METHOD_LONG(setMargin,margin)
+ZEND_METHOD(zxing_write_class, setMargin){
+    PROPERTY_SET_LONG_ONE_PARAM_LONG("margin");
+}
 ZEND_METHOD(zxing_write_class, setEccLevel){
     PROPERTY_SET_LONG_ONE_PARAM_LONG("ecc_level");
 }

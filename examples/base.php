@@ -2,7 +2,7 @@
 //more detail,see ../zxing_cpp.php
 //write qrcode to image dome
 try{
-    $a=new ZXing\Write(300,300,ZXing\Write::BarcodeFormatQRCode);
+    $a=new ZXing\Write(ZXing\Write::BarcodeFormatQRCode);
     $b=$a->render("1111");
     $b->setColor(0x88000000,0xFFFFFFFF);
     //$b->setBackground(ZXing\Image::loadFile(__DIR__."/aa.jpg"));//set qrcode background image

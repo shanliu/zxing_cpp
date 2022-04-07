@@ -112,6 +112,8 @@ int zxing_read_code(
         int desiredChannels,
         int width,
         int height,
+        int src_width,
+        int src_height,
         zend_string * character,
         unsigned char* eanAddOnSymbolVar,
         const unsigned char* binarizerVar,
@@ -201,14 +203,22 @@ int zxing_read_code(
     array_init(return_value);
     for (auto&& result : results) {
         auto res = new Result(result);
-        zval param[1];
+        zval param[5];
         zval out;
         ZVAL_RES(&param[0], zend_register_resource(res, resource_id_get_read_result()));
-        if (!zxing_new_class(result_ce_ptr, &out, param, 1)) {
+        ZVAL_LONG(&param[1],width);
+        ZVAL_LONG(&param[2],height);
+        ZVAL_LONG(&param[3],src_width);
+        ZVAL_LONG(&param[4],src_height);
+        if (!zxing_new_class(result_ce_ptr, &out, param, 5)) {
             zval_ptr_dtor(&param[0]);
             return 0;
         }
         zval_ptr_dtor(&param[0]);
+        zval_ptr_dtor(&param[1]);
+        zval_ptr_dtor(&param[2]);
+        zval_ptr_dtor(&param[3]);
+        zval_ptr_dtor(&param[4]);
         if (EG(exception)){
             zval_ptr_dtor(&out);
             return 0;
@@ -306,19 +316,38 @@ void zxing_read_result_symbology_identifier(zval *res,zval *return_value){
     add_next_index_zval(return_value,&name);\
 }while(0)
 
-void zxing_read_result_position(zval *res,zval *return_value){
+#define ZXING_RET_XY_POINT_REVERT(point,to_size,src_size) (zend_long)((double)point/(double)to_size*(double)src_size)
+
+void zxing_read_result_position(zval *res,
+                                zend_bool revert,
+                                zend_long width,
+                                zend_long height,
+                                zend_long src_width,
+                                zend_long src_height,
+                                zval *return_value){
+    if (width<=0||height<=0||src_height<=0||src_height<=0){
+        ZVAL_NULL(return_value);
+        return;
+    }
     auto result=result_zval_get_result(res,return_value);
     if (result== nullptr)return;
     auto pos=result->position();
     array_init(return_value);
-    ZXING_RET_XY_POINT_AYY(ret0,pos.topLeft().x,pos.topLeft().y);
-    ZXING_RET_XY_POINT_AYY(ret1,pos.topRight().x,pos.topRight().y);
-    ZXING_RET_XY_POINT_AYY(ret2,pos.bottomRight().x,pos.bottomRight().y);
-    ZXING_RET_XY_POINT_AYY(ret3,pos.bottomLeft().x,pos.bottomLeft().y);
+    if(revert){
+        ZXING_RET_XY_POINT_AYY(ret0,ZXING_RET_XY_POINT_REVERT(pos.topLeft().x,width,src_width),ZXING_RET_XY_POINT_REVERT(pos.topLeft().y,height,src_height));
+        ZXING_RET_XY_POINT_AYY(ret1,ZXING_RET_XY_POINT_REVERT(pos.topRight().x,width,src_width),ZXING_RET_XY_POINT_REVERT(pos.topRight().y,height,src_height));
+        ZXING_RET_XY_POINT_AYY(ret2,ZXING_RET_XY_POINT_REVERT(pos.bottomRight().x,width,src_width),ZXING_RET_XY_POINT_REVERT(pos.bottomRight().y,height,src_height));
+        ZXING_RET_XY_POINT_AYY(ret3,ZXING_RET_XY_POINT_REVERT(pos.bottomLeft().x,width,src_width),ZXING_RET_XY_POINT_REVERT(pos.bottomLeft().y,height,src_height));
+    }else{
+        ZXING_RET_XY_POINT_AYY(ret0,pos.topLeft().x,pos.topLeft().y);
+        ZXING_RET_XY_POINT_AYY(ret1,pos.topRight().x,pos.topRight().y);
+        ZXING_RET_XY_POINT_AYY(ret2,pos.bottomRight().x,pos.bottomRight().y);
+        ZXING_RET_XY_POINT_AYY(ret3,pos.bottomLeft().x,pos.bottomLeft().y);
+    }
 }
 
 
-void zxing_read_result_size(zval *res,int type,zval *return_value){
+void zxing_read_result_size(zval *res,int type,zend_bool revert ,float ratio,zval *return_value){
     auto result=result_zval_get_result(res,return_value);
     if (result== nullptr)return;
     auto pos=result->position();
@@ -346,6 +375,9 @@ void zxing_read_result_size(zval *res,int type,zval *return_value){
     }
     zend_long size;
     size=sqrt(pow(w,2)+pow(h,2));
+    if(revert){
+        RETURN_LONG(size*ratio);
+    }
     RETURN_LONG(size);
 }
 

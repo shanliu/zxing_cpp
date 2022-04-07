@@ -10,18 +10,29 @@ extern "C" {
 //read result class
 
 
-ZEND_BEGIN_ARG_INFO_EX(zxing_read_result_controller_arginfo, 0, 0, 1)
+ZEND_BEGIN_ARG_INFO_EX(zxing_read_result_controller_arginfo, 0, 0, 3)
     ZEND_ARG_INFO(0, res)
+    ZEND_ARG_INFO(0, width)
+    ZEND_ARG_INFO(0, height)
+    ZEND_ARG_INFO(0, src_width)
+    ZEND_ARG_INFO(0, src_height)
 ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(zxing_read_result_set_angle_escape_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0, angle_escape)
 ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(zxing_read_result_compare_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0, result)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(zxing_read_result_get_size_escape_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0, type)
+    ZEND_ARG_INFO(0, revert)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(zxing_read_get_position_arginfo, 0, 0, 0)
+    ZEND_ARG_INFO(0, revert)
 ZEND_END_ARG_INFO()
 
 
@@ -36,6 +47,7 @@ void zxing_read_result_class_init();
 #ifdef __cplusplus
 }
 #endif
+
 
 
 

@@ -169,11 +169,15 @@ class ReadResult {
 	/* properties */
 	private $res = NULL;
 	private $angle_escape = "1";
+	private $width = NULL;
+	private $height = NULL;
+	private $src_width = NULL;
+	private $src_height = NULL;
 
 	/**
 	 * scan result
 	 */
-	public function __construct($res) {
+	public function __construct($res, $width, $height, $src_width = NULL, $src_height = NULL) {
 	}
 	/**
 	 * Same as `ToUtf8()` above, except if angleEscape set, places non-graphical characters in angle brackets with text name
@@ -186,16 +190,18 @@ class ReadResult {
 	/**
 	 * get horizontally size
 	 * @param int $type see Width* const
+	 * @param bool $revert is get before width
 	 * @return int
 	 */
-	public function getWidth($type) {
+	public function getWidth($type,$revert=false) {
 	}
 	/**
 	 * get Vertically size
 	 * @param int $type see Height* const
+	 * @param bool $revert is get before height
 	 * @return int
 	 */
-	public function getHeight($type) {
+	public function getHeight($type,$revert=false) {
 	}
 	/**
 	 * get status
@@ -242,9 +248,10 @@ class ReadResult {
 	/**
 	 * result Position
 	 * [][x,y]
+	 * @param bool $revert is get before resize point?
 	 * @return array
 	 */
-	public function getPosition() {
+	public function getPosition($revert=false) {
 	}
 	/**
 	 * orientation of barcode in degree
@@ -404,16 +411,15 @@ class Write {
 	private $height = "100";
 	private $margin = "0";
 	private $encoding = NULL;
-	private $character = "0";
 	private $ecc_level = "0";
 
 	/**
 	 * output Barcode image
 	 * @param int $format see BarcodeFormat* const
-	 * @param int $width
-	 * @param int $height
+	 * @param int $width default is 100
+	 * @param int $height default is 100
 	 */
-	public function __construct($format, $width, $height) {
+	public function __construct($format, $width=100, $height=100) {
 	}
 	/**
 	 * reset format
@@ -583,16 +589,28 @@ class Image {
 	public function getChannel() {
 	}
 	/**
-	 * image height
+	 * get resize image height
 	 * @return int 
 	 */
 	public function getHeight() {
 	}
 	/**
-	 * image width
+	 * get resize image width
 	 * @return int 
 	 */
 	public function getWidth() {
+	}
+	/**
+	 * get image width
+	 * @return int 
+	 */
+	public function getSrcWidth() {
+	}
+	/**
+	 * get image width
+	 * @return int 
+	 */
+	public function getSrcHeight() {
 	}
 	/**
 	 * image resource,may be debug use it.

@@ -25,6 +25,8 @@ int zxing_read_code(
         int desiredChannels,
         int width,
         int height,
+        int src_width,
+        int src_height,
         zend_string * character,
         unsigned char* eanAddOnSymbolVar,
         const unsigned char* binarizerVar,
@@ -39,7 +41,7 @@ int zxing_read_code(
         zend_class_entry *result_ce_ptr,
         zval *return_value
 );
-void zxing_read_result_size(zval *res,int type,zval *return_value);
+void zxing_read_result_size(zval *res,int type,zend_bool revert ,float ratio,zval *return_value);
 void zxing_read_result_text(zval *res,zend_bool angleEscape,zval *return_value);
 void zxing_read_result_status(zval *res,zval *return_value);
 void zxing_read_result_is_valid(zval *res,zval *return_value);
@@ -47,7 +49,7 @@ void zxing_read_result_num_bits(zval *res,zval *return_value);
 void zxing_read_result_format(zval *res,zval *return_value);
 void zxing_read_result_format_name(zval *res,zval *return_value);
 void zxing_read_result_symbology_identifier(zval *res,zval *return_value);
-void zxing_read_result_position(zval *res,zval *return_value);
+void zxing_read_result_position(zval *res,zend_bool revert,  zend_long width, zend_long height, zend_long src_width,zend_long src_height,zval *return_value);
 void zxing_read_result_orientation(zval *res,zval *return_value);
 void zxing_read_result_ec_level(zval *res,zval *return_value);
 void zxing_read_result_line_count(zval *res,zval *return_value);

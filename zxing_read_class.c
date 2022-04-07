@@ -76,11 +76,13 @@ ZEND_METHOD(zxing_read_class, scan){
         zend_throw_exception_ex(zxing_exception_ce_ptr, 100, "your give image is invalid : %s", ZSTR_VAL(zxing_read_ce_ptr->name));
         return ;
     }
-    zend_long width,height,channel;
+    zend_long width,height,channel,src_width,src_height;
 
 
     if (!object_get_gt_long(&width,0, result,ZEND_STRL("width"),"your give image width is invalid"))return ;
-    if (!object_get_gt_long(&height,0,result,ZEND_STRL("height"),"your give height width is invalid"))return ;
+    if (!object_get_gt_long(&src_width,0, result,ZEND_STRL("src_width"),"your give image source width is invalid"))return ;
+    if (!object_get_gt_long(&height,0,result,ZEND_STRL("height"),"your give image height is invalid"))return ;
+    if (!object_get_gt_long(&src_height,0,result,ZEND_STRL("src_height"),"your give image source height  is invalid"))return ;
     if (!object_get_gt_long(&channel,0,result,ZEND_STRL("channel"),"your give image channel is invalid"))return ;
     if (!zxing_check_image_channels(channel)) return ;
 
@@ -131,6 +133,8 @@ ZEND_METHOD(zxing_read_class, scan){
         channel,
         width,
         height,
+        src_width,
+        src_height,
         character,
         ( unsigned char*)ean_add_on_symbol_p,
         ( unsigned char*)binaries_p,

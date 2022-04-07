@@ -8,7 +8,7 @@ extern "C" {
 #define PHP_ZXING_WRITE_CLASS_INFO_H
 
 
-ZEND_BEGIN_ARG_INFO_EX(zxing_write_controller_arginfo, 0, 0, 3)
+ZEND_BEGIN_ARG_INFO_EX(zxing_write_controller_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0, format)
     ZEND_ARG_INFO(0, width)
     ZEND_ARG_INFO(0, height)

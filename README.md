@@ -15,7 +15,7 @@
 #### build for linux or mac
 
 ```shell
-cd zxing_cpp # go to your `shanliu/zxing-cpp` src dir
+cd zxing_cpp # go to your `shanliu/zxing_cpp` src dir
 git clone --progress -v --depth 1 https://github.com/nothings/stb stb-src
 git clone --progress -v --depth 1 https://github.com/nu-book/zxing-cpp zxing-cpp-src
 cd zxing-cpp-src && cmake . && make && make install && cd .. # Maybe you set prefix??
@@ -33,7 +33,7 @@ load PHP build env \your-php-sdk-binary-tools-dir\bin\phpsdk_setvars.bat
 ```
 
 ```cmd
-cd zxing_cpp # go to your zxing_cpp src dir and download `shanliu/zxing-cpp` to ext/zxing-cpp
+cd zxing_cpp # go to your zxing_cpp src dir and download `shanliu/zxing_cpp` to ext/zxing_cpp
 win_dep.cmd #download lib
 cd your_php_src # go to your php src dir
 buildconf.bat

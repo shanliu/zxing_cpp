@@ -81,7 +81,7 @@ PHP_MINFO_FUNCTION(zxing_cpp)
 {
     char buf[32];
 	php_info_print_table_start();
-	php_info_print_table_header(2, "zxing-cpp", "enabled");
+	php_info_print_table_header(2, "zxing_cpp", "enabled");
 #ifdef STBI_VERSION
     snprintf(buf, sizeof(buf), "%d", STBI_VERSION);
 	php_info_print_table_row(2, "stb version",buf );
@@ -97,7 +97,7 @@ PHP_MINFO_FUNCTION(zxing_cpp)
 /* {{{ zxing_cpp_module_entry */
 zend_module_entry zxing_cpp_module_entry = {
 	STANDARD_MODULE_HEADER,
-	"zxing-cpp",					/* Extension name */
+	"zxing_cpp",					/* Extension name */
 	NULL,					/* zend_function_entry */
 	PHP_MINIT(zxing_cpp),							/* PHP_MINIT - Module initialization */
 	NULL,							/* PHP_MSHUTDOWN - Module shutdown */
