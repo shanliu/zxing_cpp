@@ -33,7 +33,7 @@ load PHP build env \your-php-sdk-binary-tools-dir\bin\phpsdk_setvars.bat
 ```
 
 ```cmd
-cd zxing_cpp # go to your zxing_cpp src dir and download `shanliu/zxing_cpp` to ext/zxing_cpp
+cd zxing_cpp #download `shanliu/zxing_cpp` to ext/zxing_cpp and go to the zxing_cpp dir 
 win_dep.cmd #download lib
 cd your_php_src # go to your php src dir
 buildconf.bat
