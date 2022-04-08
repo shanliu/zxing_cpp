@@ -2,7 +2,7 @@
 	"name" : "shanliu/zxing_cpp",
 	"type" : "library",
 	"license" : "Apache-2.0",
-	"description" : "zxing lib",
+	"description" : "zxing-cpp wrappers for php extension,replace qrcode in image",
 	"autoload" : {
 		"files": ["lib/barcode.php"]
 	},
