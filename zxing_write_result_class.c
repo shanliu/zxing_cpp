@@ -5,6 +5,8 @@
 extern "C" {
 #endif
 #include "zend.h"
+#include "ext/standard/file.h"
+#include "ext/standard/flock_compat.h"
 #include "zend_API.h"
 #include "zxing_write_result_class.h"
 #include "zxing_common.h"
@@ -13,7 +15,7 @@ extern "C" {
 #include "zxing_exception_class.h"
 #include "zxing_read_class.h"
 #include "zxing_image_class.h"
-
+#include <fcntl.h>
 
 static void zxing_write_result_property_declare(zend_class_entry *zxing_ce_ptr) {
     zend_declare_property_null(zxing_ce_ptr, ZEND_STRL("background_res"),ZEND_ACC_PRIVATE);
@@ -56,27 +58,77 @@ ZEND_METHOD(zxing_write_result_class, setColor){
 }
 
 ZEND_METHOD(zxing_write_result_class, save){
-    char *file;
-    size_t file_len;
+    php_stream *stream;
+    char *filename;
+    size_t filename_len;
     zend_long type;
     zend_long quality=0;
-    ZEND_PARSE_PARAMETERS_START(2,3)
-        Z_PARAM_LONG(type)
-        Z_PARAM_STRING(file,file_len)
-        Z_PARAM_OPTIONAL
-        Z_PARAM_LONG(quality)
-    ZEND_PARSE_PARAMETERS_END();
+    ssize_t numbytes;
+    zval *zcontext = NULL;
+    php_stream_context *context = NULL;
 
-    zxing_write_result_to_file(
-        zxing_read_property( getThis(),ZEND_STRL("res"),1),
-        zxing_read_property( getThis(),ZEND_STRL("background_res"),0),
-        (unsigned long)Z_LVAL_P(zxing_read_property( getThis(),ZEND_STRL("background_color"),1)),
-        (unsigned long)Z_LVAL_P(zxing_read_property( getThis(),ZEND_STRL("front_color"),1)),
-        type,
-        file,
-        return_value,
-        quality
-    );
+#if PHP_VERSION_ID < 80000
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "lp|lr!",&type, &filename, &filename_len, &quality, &zcontext) == FAILURE) {
+		return;
+	}
+#else
+    ZEND_PARSE_PARAMETERS_START(2, 4)
+            Z_PARAM_LONG(type)
+            Z_PARAM_PATH(filename, filename_len)
+            Z_PARAM_OPTIONAL
+            Z_PARAM_LONG(quality)
+            Z_PARAM_RESOURCE_OR_NULL(zcontext)
+    ZEND_PARSE_PARAMETERS_END();
+#endif
+    zval data;
+    if(!zxing_write_result_to_data(
+            zxing_read_property( getThis(),ZEND_STRL("res"),0),
+            zxing_read_property( getThis(),ZEND_STRL("background_res"),0),
+            (unsigned long)Z_LVAL_P(zxing_read_property( getThis(),ZEND_STRL("background_color"),0)),
+            (unsigned long)Z_LVAL_P(zxing_read_property( getThis(),ZEND_STRL("front_color"),0)),
+            type,
+            &data,
+            quality
+    )){
+        RETURN_FALSE;
+    }
+    context = php_stream_context_from_zval(zcontext,0);
+    /* check to make sure we are dealing with a regular file */
+    if (php_memnstr(filename, "://", sizeof("://") - 1, filename + filename_len)) {
+        if (strncasecmp(filename, "file://", sizeof("file://") - 1)) {
+            zval_dtor(&data);
+            zend_throw_exception_ex(zxing_exception_ce_ptr, 29,"Exclusive locks may only be set for regular files");
+            RETURN_FALSE;
+        }
+    }
+    stream = php_stream_open_wrapper_ex(filename, "cb\0", REPORT_ERRORS, NULL, context);
+    if (stream == NULL) {
+        zval_dtor(&data);
+        if (EG(exception)){
+            eg_ec_convert_zxing_ec();
+        }else{
+            zend_throw_exception_ex(zxing_exception_ce_ptr, 14, "open path error : %s",filename);
+        }
+        RETURN_FALSE;
+    }
+    if (!php_stream_supports_lock(stream) || php_stream_lock(stream, LOCK_EX)) {
+        php_stream_close(stream);
+        zval_dtor(&data);
+        zend_throw_exception_ex(zxing_exception_ce_ptr, 46,"Exclusive locks are not supported for this stream");
+        RETURN_FALSE;
+    }
+    php_stream_truncate_set_size(stream, 0);
+    numbytes = php_stream_write(stream, Z_STRVAL(data), Z_STRLEN(data));
+    if (numbytes != -1 && numbytes != Z_STRLEN(data)) {
+        zend_throw_exception_ex(zxing_exception_ce_ptr, 49,"Only %zd of %zd bytes written, possibly out of free disk space", numbytes, Z_STRLEN(data));
+        numbytes = -1;
+    }
+    zval_dtor(&data);
+    php_stream_close(stream);
+    if (numbytes < 0) {
+        RETURN_FALSE;
+    }
+    RETURN_LONG(numbytes);
 }
 ZEND_METHOD(zxing_write_result_class, data){
     zend_long type;
@@ -86,8 +138,6 @@ ZEND_METHOD(zxing_write_result_class, data){
             Z_PARAM_OPTIONAL
             Z_PARAM_LONG(quality)
     ZEND_PARSE_PARAMETERS_END();
-
-
 
     zxing_write_result_to_data(
             zxing_read_property( getThis(),ZEND_STRL("res"),0),

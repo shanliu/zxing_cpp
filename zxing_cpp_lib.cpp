@@ -823,41 +823,41 @@ void free_channel_data(uint8_t * data){
     free(data);
 }
 
-
-void zxing_write_result_to_file(zval *res,zval *bg_res,unsigned long bgc,unsigned long fc,zend_long type,char* file,zval *return_value,int quality){
-    auto bitmap=result_zval_write_result(res,return_value);
-    if (bitmap== nullptr)return ;
-    uint8_t * data=malloc_channel_data(bg_res,bgc,fc,(uint8_t *)bitmap->data(),bitmap->size(),bitmap->width(),bitmap->height());
-    if(data==NULL){
-        return;
-    }
-    try {
-        int success = 0;
-        switch (type) {
-            case IMAGE_TYPE_BMP:
-                success = stbi_write_bmp(file, bitmap->width(), bitmap->height(), 4, data);
-                break;
-            case IMAGE_TYPE_JPG:
-                success = stbi_write_jpg(file, bitmap->width(), bitmap->height(), 4, data, quality);
-                break;
-            case IMAGE_TYPE_PNG:
-                success = stbi_write_png(file, bitmap->width(), bitmap->height(), 4, data, 0);
-                break;
-            default:
-                zend_throw_exception_ex(zxing_exception_ce_ptr,8,"your give image type not support :%d ",(int)type );
-                break;
-        }
-        if (success<=0){
-            if (!EG(exception)){
-                zend_throw_exception_ex(zxing_exception_ce_ptr,28,"write fail [%s] :%s  ",file,stbi_failure_reason() );
-            }
-        }
-        free_channel_data(data);
-    } catch (const std::exception& e) {
-        free_channel_data(data);
-        zend_throw_exception_ex(zxing_exception_ce_ptr, 22, "exception :%s ",e.what() );
-    }
-}
+//
+//void zxing_write_result_to_file(zval *res,zval *bg_res,unsigned long bgc,unsigned long fc,zend_long type,char* file,zval *return_value,int quality){
+//    auto bitmap=result_zval_write_result(res,return_value);
+//    if (bitmap== nullptr)return ;
+//    uint8_t * data=malloc_channel_data(bg_res,bgc,fc,(uint8_t *)bitmap->data(),bitmap->size(),bitmap->width(),bitmap->height());
+//    if(data==NULL){
+//        return;
+//    }
+//    try {
+//        int success = 0;
+//        switch (type) {
+//            case IMAGE_TYPE_BMP:
+//                success = stbi_write_bmp(file, bitmap->width(), bitmap->height(), 4, data);
+//                break;
+//            case IMAGE_TYPE_JPG:
+//                success = stbi_write_jpg(file, bitmap->width(), bitmap->height(), 4, data, quality);
+//                break;
+//            case IMAGE_TYPE_PNG:
+//                success = stbi_write_png(file, bitmap->width(), bitmap->height(), 4, data, 0);
+//                break;
+//            default:
+//                zend_throw_exception_ex(zxing_exception_ce_ptr,8,"your give image type not support :%d ",(int)type );
+//                break;
+//        }
+//        if (success<=0){
+//            if (!EG(exception)){
+//                zend_throw_exception_ex(zxing_exception_ce_ptr,28,"write fail [%s] :%s  ",file,stbi_failure_reason() );
+//            }
+//        }
+//        free_channel_data(data);
+//    } catch (const std::exception& e) {
+//        free_channel_data(data);
+//        zend_throw_exception_ex(zxing_exception_ce_ptr, 22, "exception :%s ",e.what() );
+//    }
+//}
 
 typedef struct {
     int len;
@@ -898,21 +898,22 @@ static void zxing_stbi_mem_context_write(void *context, void *data, int size) {
     }
     c->len = c->len+size;
 }
-void zxing_write_result_to_data(zval *res,zval *bg_res,unsigned long bgc,unsigned long fc,zend_long type,zval *return_value,int quality){
+int zxing_write_result_to_data(zval *res,zval *bg_res,unsigned long bgc,unsigned long fc,zend_long type,zval *return_value,int quality){
     auto bitmap=result_zval_write_result(res,return_value);
-    if (bitmap== nullptr)return ;
+    if (bitmap== nullptr)return 0;
     uint8_t * data = malloc_channel_data(bg_res,bgc,fc,(uint8_t *)bitmap->data(),bitmap->size(),bitmap->width(),bitmap->height());
     if(data==NULL){
-        return;
+        return 0;
     }
-
+    int success = 0;
     try {
-        int success = 0;
         if (type==IMAGE_TYPE_BMP){
             zxing_stbi_mem_context context{0,0,nullptr};
             success = stbi_write_bmp_to_func(zxing_stbi_mem_context_write,&context,bitmap->width(), bitmap->height(), 4, data);
             if (success&&context.len>0){
                 ZVAL_NEW_STR(return_value,zend_string_init(context.body,context.len,0));
+            }else{
+                success=0;
             }
             zxing_stbi_mem_context_free(&context);
         }else if (type==IMAGE_TYPE_JPG){
@@ -920,12 +921,15 @@ void zxing_write_result_to_data(zval *res,zval *bg_res,unsigned long bgc,unsigne
             success = stbi_write_jpg_to_func(zxing_stbi_mem_context_write,&context,bitmap->width(), bitmap->height(), 4, data,quality);
             if (success&&context.len>0){
                 ZVAL_NEW_STR(return_value,zend_string_init(context.body,context.len,0));
+            }else{
+                success=0;
             }
             zxing_stbi_mem_context_free(&context);
         }else if(type==IMAGE_TYPE_PNG){
             int len;
             const char *png =(char *) stbi_write_png_to_mem((const unsigned char *) data, 0, bitmap->width(), bitmap->height(), 4, &len);
-            if (png == NULL){
+            if (png == NULL||len==0){
+                STBIW_FREE((void *)png);
                 success=0;
             }else{
                 success=1;
@@ -937,7 +941,7 @@ void zxing_write_result_to_data(zval *res,zval *bg_res,unsigned long bgc,unsigne
         }
         if (success<=0){
             if (!EG(exception)){
-                zend_throw_exception_ex(zxing_exception_ce_ptr,28,"get data fail :%s  ",stbi_failure_reason() );
+                zend_throw_exception_ex(zxing_exception_ce_ptr,28,"parse result data fail :%s  ",stbi_failure_reason() );
             }
         }
         free_channel_data(data);
@@ -945,6 +949,7 @@ void zxing_write_result_to_data(zval *res,zval *bg_res,unsigned long bgc,unsigne
         free_channel_data(data);
         zend_throw_exception_ex(zxing_exception_ce_ptr, 22, "exception :%s ",e.what() );
     }
+    return success;
 }
 
 

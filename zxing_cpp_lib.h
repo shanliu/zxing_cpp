@@ -80,8 +80,8 @@ int zxing_write_create_result(
     zend_class_entry * write_ce_ptr,
     zval *return_value
 );
-void zxing_write_result_to_file(zval *res,zval *bg_res,unsigned long bgc,unsigned long fc,zend_long type,char* file,zval *return_value,int quality);
-void zxing_write_result_to_data(zval *res,zval *bg_res,unsigned long bgc,unsigned long fc,zend_long type,zval *return_value,int quality);
+//void zxing_write_result_to_file(zval *res,zval *bg_res,unsigned long bgc,unsigned long fc,zend_long type,char* file,zval *return_value,int quality);
+int zxing_write_result_to_data(zval *res,zval *bg_res,unsigned long bgc,unsigned long fc,zend_long type,zval *return_value,int quality);
 
 
 

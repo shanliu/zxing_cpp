@@ -96,21 +96,11 @@ ZEND_METHOD(zxing_image_class, loadFile){
                                         (use_include_path ? USE_PATH : 0) | REPORT_ERRORS,
                                         NULL, context);
     if (!stream) {
-#if PHP_VERSION_ID >= 80000
         if (EG(exception)){
-            zval* msg=zend_read_property_ex(EG(exception)->ce,EG(exception),ZSTR_KNOWN(ZEND_STR_MESSAGE),1,NULL);
-            zval* code=zend_read_property_ex(EG(exception)->ce,EG(exception),ZSTR_KNOWN(ZEND_STR_CODE),1,NULL);
-            zval ex;
-            object_init_ex(&ex, zxing_exception_ce_ptr);
-            zend_update_property_ex(zxing_exception_ce_ptr, Z_OBJ(ex), ZSTR_KNOWN(ZEND_STR_MESSAGE), msg);
-            zend_update_property_ex(zxing_exception_ce_ptr, Z_OBJ(ex), ZSTR_KNOWN(ZEND_STR_CODE), code);
-            zend_throw_exception_internal(Z_OBJ(ex));
+            eg_ec_convert_zxing_ec();
         }else{
-            zend_throw_exception_ex(zxing_exception_ce_ptr, 14, "open file error[%s]",filename);
+            zend_throw_exception_ex(zxing_exception_ce_ptr, 14, "open path error : %s",filename);
         }
-#else
-        zend_throw_exception_ex(zxing_exception_ce_ptr, 14, "open file error[%s]",filename);
-#endif
         RETURN_NULL();
     }
 

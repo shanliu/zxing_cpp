@@ -1,18 +1,32 @@
 <?php
 //more detail,see ../zxing_cpp.php
-//write qrcode to image dome
+//write qrcode to image
 try{
     $a=new ZXing\Write(ZXing\Write::BarcodeFormatQRCode);
     $b=$a->render("1111");
-    $b->setColor(0x88000000,0xFFFFFFFF);
-    //$b->setBackground(ZXing\Image::loadFile(__DIR__."/aa.jpg"));//set qrcode background image
+    $b->setColor(0xCCFFFFFF,0xCC000000);
+   // $b->setBackground(ZXing\Image::loadFile('https://h5.sinaimg.cn/upload/1005/526/2021/09/09/logo.png'));//set qrcode background image
     file_put_contents(__DIR__."/cc.jpg",$b->data(ZXing\WriteResult::ImagePng));
 }catch(\Exception $e){
     print_r($e);
 }
+
+
+//write qrcode to image
+try{
+    $a=new ZXing\Write(ZXing\Write::BarcodeFormatQRCode);
+    $b=$a->render("1111");
+    $b->setColor(0x88000000,0xFFFFFFFF);
+    $b->save(ZXing\WriteResult::ImagePng,__DIR__."/cc11.jpg");//test save method
+    $b->save(ZXing\WriteResult::ImagePng,'');//test save path error
+}catch(\Exception $e){
+    print_r($e);
+}
+
+
 //read qrcode form image
 try{
-    $a=ZXing\Image::loadFile(__DIR__."/cc.jpg");
+    $a=ZXing\Image::loadFile(__DIR__."/cc.jpg");//support url
     if( $a->getWidth()>1024){
         $a->resize(1024,0);
     }
@@ -50,7 +64,9 @@ try{
     print_r($e);
 }
 
-try{//check throw exception
+
+//test read file error
+try{
     $a=ZXing\Image::loadFile('');
     print_r($a);
 }catch(\Exception $e){

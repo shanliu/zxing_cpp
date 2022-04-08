@@ -21,7 +21,7 @@ int resource_id_get_read_result(void);
 int resource_id_get_write_result(void);
 void* zval_get_resource(zval *res,const char *type_name,int type_id);
 int zxing_new_class(zend_class_entry *ce,zval *return_value,zval *params,int num_args);
-
+void eg_ec_convert_zxing_ec();
 int zxing_check_image_channels(zend_long desired_channels);
 
 

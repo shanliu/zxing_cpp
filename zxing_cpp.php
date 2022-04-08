@@ -518,8 +518,9 @@ class WriteResult {
 	 * @param int $type see Image* const
 	 * @param string $path save image path
 	 * @param int $quality only jpg format
+	 * @param resource|null $context eq file_put_contents $context param
 	 */
-	public function save($type, $path, $quality = NULL) {
+	public function save($type, $path, $quality = NULL,$context=NULL) {
 	}
 	/**
 	 * return image data is string
@@ -564,9 +565,13 @@ class Image {
 	 * new Image object form image file
 	 * @param string $file image file
 	 * @param int $desired_channels set load image channel value: [0,1,3,4]
+	 * @param int $use_include_patheq file_get_contents $use_include_patheq param
+	 * @param resource|null $context eq file_get_contents $context param
+	 * @param int $offset eq file_get_contents $offset param
+	 * @param int $maxlen eq file_get_contents $maxlen param
 	 * @return Image
 	 */
-	public static function loadFile($file, $desired_channels = NULL) {
+	public static function loadFile(string $file,int $desired_channels = 0,bool $use_include_path = null, $context = null, int $offset = null, int $maxlen = null) {
 	}
 	/**
 	 * new Image object form image string,may be form file_get_contents

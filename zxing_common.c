@@ -169,6 +169,31 @@ zval * zxing_read_property(zval * z_object,const char *name, size_t name_length,
 }while(0)
 #endif
 
+
+void eg_ec_convert_zxing_ec(){
+    #if PHP_VERSION_ID >= 72000
+        zval* msg=zend_read_property_ex(EG(exception)->ce,EG(exception),ZSTR_KNOWN(ZEND_STR_MESSAGE),1,NULL);
+        zval* code=zend_read_property_ex(EG(exception)->ce,EG(exception),ZSTR_KNOWN(ZEND_STR_CODE),1,NULL);
+        zval ex;
+        object_init_ex(&ex, zxing_exception_ce_ptr);
+        zend_update_property_ex(zxing_exception_ce_ptr, Z_OBJ(ex), ZSTR_KNOWN(ZEND_STR_MESSAGE), msg);
+        zend_update_property_ex(zxing_exception_ce_ptr, Z_OBJ(ex), ZSTR_KNOWN(ZEND_STR_CODE), code);
+        zend_throw_exception_internal(Z_OBJ(ex));
+    #else
+        zval tmp;
+        ZVAL_OBJ(&tmp,EG(exception));
+        zval* msg=zend_read_property(EG(exception)->ce,&tmp,"message", sizeof("message")-1,1,NULL);
+        zval* code=zend_read_property(EG(exception)->ce,&tmp,"code", sizeof("code")-1,1,NULL);
+        zval ex;
+        object_init_ex(&ex, zxing_exception_ce_ptr);
+        zend_update_property(zxing_exception_ce_ptr,&ex, "message", sizeof("message")-1, msg);
+        zend_update_property(zxing_exception_ce_ptr,&ex, "code", sizeof("code")-1, code);
+        zend_throw_exception_internal(&ex);
+    #endif
+}
+
+
+
 int object_get_bool(zend_bool *val,zval * object,const char *name, size_t name_length,const char *format, ...){
     zval *tmp= zxing_read_property(object, name,name_length,1);
     if (Z_TYPE_INFO_P(tmp)==IS_TRUE) {

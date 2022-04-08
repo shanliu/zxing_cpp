@@ -1,0 +1,13 @@
+{
+	"name" : "shanliu/zxing_cpp",
+	"type" : "library",
+	"license" : "Apache-2.0",
+	"description" : "zxing lib",
+	"autoload" : {
+		"files": ["lib/barcode.php"]
+	},
+	"require": {
+     	"ext-zxing_cpp": "*",
+     	"ext-gd": "*"
+	}
+}
